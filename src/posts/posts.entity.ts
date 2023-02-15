@@ -21,6 +21,12 @@ export class Posts {
     type: 'varchar',
     length: '250',
   })
+  title: string;
+
+  @Column({
+    type: 'varchar',
+    length: '250',
+  })
   text: string;
 
   @CreateDateColumn({ name: 'created_at' })

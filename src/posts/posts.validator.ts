@@ -13,9 +13,14 @@ export const createValidator: ValidationChain[] = [
     .isEmpty()
     .withMessage('The post text is mandatory')
     .trim(),
+  body('title')
+    .not()
+    .isEmpty()
+    .withMessage('The post title is mandatory')
+    .trim(),
   body('createdAt')
     .trim()
-    .isDate()
+    .isString()
     .withMessage('createAt with wrong format')
     .not()
     .isEmpty()
@@ -34,6 +39,11 @@ export const updateValidator: ValidationChain[] = [
   .not()
   .isEmpty()
   .withMessage('post id is mandatory'),
+  body('title')
+    .not()
+    .isEmpty()
+    .withMessage('The post title is mandatory')
+    .trim(),
   body('text')
     .not()
     .isEmpty()
@@ -43,7 +53,7 @@ export const updateValidator: ValidationChain[] = [
     .withMessage('Only string are allowed'),
   body('updatedAt')
     .trim()
-    .isDate()
+    .isString()
     .withMessage('createAt with wrong format')
     .not()
     .isEmpty()

@@ -71,11 +71,12 @@ class PostsController {
       }
 
       const newPost = new Posts();
-      const { author, text, createdAt} = req.body;
+      const { author, text, createdAt, title} = req.body;
       newPost.author = author;
       newPost.text = text;
-      newPost.createdAt = createdAt;
-      newPost.updatedAt = createdAt;
+      newPost.createdAt = new Date(createdAt);
+      newPost.updatedAt = new Date(createdAt);
+      newPost.title = title;
       let createdPost: Posts = await AppDataSource.getRepository(Posts).save(newPost);
       createdPost = instanceToPlain(createdPost) as Posts;
       return res.status(201).json(createdPost);
@@ -98,7 +99,7 @@ class PostsController {
       let post: Posts | null;
       let updatedPost: UpdateResult;
 
-      const { text, updatedAt } = req.body;
+      const { text, author, title, updatedAt } = req.body;
       const { id } = req.params;
       post = await AppDataSource.getRepository(Posts).findOne({ where: { id }});
       if (!post) {
@@ -106,14 +107,17 @@ class PostsController {
           .status(404)
           .json({error: 'The post with given ID does not exist'});
       }
+      let postData: Posts = {} as Posts;
+      if (text) postData.text = text;
+      if (author) postData.author = author;
+      if (title) postData.title = title;
+      if (text) postData.text = text;
+      if (updatedAt) postData.updatedAt = new Date(updatedAt);
       updatedPost = await AppDataSource.getRepository(
         Posts
       ).update(
         id,
-        plainToInstance(Posts, {
-          text,
-          updatedAt
-        })
+        plainToInstance(Posts, {...postData})
       );
       updatedPost = instanceToPlain(updatedPost) as UpdateResult;
       return res
@@ -124,6 +128,20 @@ class PostsController {
       return res
         .status(500)
         .json({error: 'Internal Server Error'});
+    }
+  }
+
+  public async searchPost(req: Request, res: Response): Promise<Response> {
+    try {
+      const results = await AppDataSource.query( 'SELECT id, text FROM posts WHERE text LIKE "%' + req.query.text +'%"');
+      return res
+        .status(200)
+        .json(results)
+    } catch (_error) {
+      console.error(_error);
+      return res
+        .status(404)
+        .json({message: 'Internal Server Error'})
     }
   }
 
