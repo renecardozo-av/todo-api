@@ -4,7 +4,9 @@ import { DataSource } from 'typeorm';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { Task } from './src/tasks/tasks.entity';
+import { Posts } from './src/posts/posts.entity';
 import { tasksRoutes } from './src/tasks/tasks.routes';
+import { postsRoutes } from './src/posts/posts.routes';
 
 const app: Express = express();
 dotenv.config();
@@ -22,7 +24,7 @@ export const AppDataSource = new DataSource({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Task],
+  entities: [Task, Posts],
   synchronize: true
 });
 
@@ -33,4 +35,5 @@ AppDataSource.initialize()
   .catch(error => console.log('Error during Data Source initializacion', error));
 
 app.use('/', tasksRoutes);
+app.use('/', postsRoutes);
 

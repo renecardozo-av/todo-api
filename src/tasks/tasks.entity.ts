@@ -5,8 +5,6 @@ import {
 } from 'typeorm';
 import { Priority } from '../enums/priority';
 import { Status } from '../enums/status';
-// import { Priority } from '../enums/priority';
-// import { Status } from '../enums/status';
 
 
 @Entity()
